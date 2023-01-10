@@ -1,0 +1,2 @@
+[alias]
+mk = "make --no-workspace --"

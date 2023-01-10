@@ -1,0 +1,91 @@
+#
+# Main commands
+#
+
+[tasks.run]
+private = false
+run_task = [
+    { name = "run-for-linux", condition = { platforms = ["linux"] } },
+]
+
+[tasks.export]
+private = false
+run_task = [
+    { name = "export-for-linux", condition = { platforms = ["linux"] } },
+]
+
+# Useful for debug variables when we work with workspace
+[tasks.echo]
+private = false
+command = "echo"
+args = ["current member: ${CARGO_MAKE_CRATE_CURRENT_WORKSPACE_MEMBER} ${CARGO_MAKE_CRATE_IS_WORKSPACE}"]
+
+#
+# Debug tasks
+#
+
+[tasks.build-crate-debug]
+private = true
+script_runner = "@shell"
+script = '''
+cargo build --target $CARGO_MAKE_RUST_TARGET_TRIPLE
+'''
+
+[tasks.build-lib-debug]
+private = true
+dependencies = ["build-crate-debug"]
+condition = { env = { "CARGO_MAKE_CRATE_IS_WORKSPACE" = "true" } }
+script_runner = "@shell"
+script = '''
+if [[ -f ./lib/$CARGO_MAKE_RUST_TARGET_TRIPLE/*.so ]]; then
+  rm ./lib/$CARGO_MAKE_RUST_TARGET_TRIPLE/*.so
+fi
+
+mkdir -p ./lib/$CARGO_MAKE_RUST_TARGET_TRIPLE
+cp ./target/$CARGO_MAKE_RUST_TARGET_TRIPLE/debug/*.so ./lib/$CARGO_MAKE_RUST_TARGET_TRIPLE
+'''
+
+[tasks.run-debug]
+private = true
+dependencies = ["build-lib-debug"]
+run_task = "run-godot"
+
+[tasks.export-debug]
+private = true
+dependencies = ["build-lib-debug"]
+run_task = "export-debug-godot"
+
+#
+# Linux tasks
+#
+
+[tasks.run-for-linux]
+private = true
+dependencies = ["run-debug"]
+env = { "CARGO_MAKE_RUST_TARGET_TRIPLE" = "x86_64-unknown-linux-gnu"}
+
+[tasks.export-for-linux]
+private = true
+dependencies = ["export-debug"]
+env = { "CARGO_MAKE_RUST_TARGET_TRIPLE" = "x86_64-unknown-linux-gnu"}
+
+#
+# Godot tasks
+#
+
+[tasks.run-godot]
+private = true
+condition = { env = { "CARGO_MAKE_CRATE_IS_WORKSPACE" = "true" } }
+script_runner = "@shell"
+script = '''
+godot --no-window ${@}
+'''
+
+[tasks.export-debug-godot]
+private = true
+condition = { env = { "CARGO_MAKE_CRATE_IS_WORKSPACE" = "true" } }
+script_runner = "@shell"
+script = '''
+mkdir -p ./bin/$CARGO_MAKE_RUST_TARGET_TRIPLE
+godot --no-window --export-debug Linux/X11 ./bin/$CARGO_MAKE_RUST_TARGET_TRIPLE/stem.debug.$CARGO_MAKE_RUST_TARGET_TRIPLE
+'''

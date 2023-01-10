@@ -1,0 +1,17 @@
+services:
+  godot-container:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ${PWD}/assets:/srv/assets:ro
+      - ${PWD}/crates:/srv/crates:ro
+      - ${PWD}/scenes:/srv/scenes:ro
+      - ${PWD}/scripts:/srv/scripts:ro
+      - ${PWD}/Cargo.toml:/srv/Cargo.toml:ro
+      - ${PWD}/default_env.tres:/srv/default_env.tres:ro
+      - ${PWD}/export_presets.cfg:/srv/export_presets.cfg:ro
+      - ${PWD}/game-3d-toolkit.gdnlib:/srv/game-3d-toolkit.gdnlib:ro
+      - ${PWD}/Makefile.toml:/srv/Makefile.toml:ro
+      - ${PWD}/project.godot:/srv/project.godot:ro
+    working_dir: /srv

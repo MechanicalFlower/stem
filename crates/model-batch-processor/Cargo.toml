@@ -1,0 +1,7 @@
+[package]
+name = "model-batch-processor"
+version = "0.1.0"
+
+[dependencies]
+gdnative = "0.11"
+argparse-gd = { path = "../argparse-gd" }

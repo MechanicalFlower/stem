@@ -1,0 +1,14 @@
+[general]
+
+singleton=false
+load_once=true
+symbol_prefix="godot_"
+reloadable=true
+
+[entry]
+
+X11.64="res://lib/x86_64-unknown-linux-gnu/libgame_3d_toolkit.so"
+
+[dependencies]
+
+X11.64=[  ]
