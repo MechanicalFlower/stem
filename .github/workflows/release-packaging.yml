@@ -22,7 +22,7 @@ jobs:
       - name: Build docker image
         run: if [[ $(docker inspect --type=image godot | wc -l) -eq 1 ]]; then docker build --file Dockerfile --build-arg GODOT_VERSION=${{ env.GODOT_VERSION }} --tag godot:${{ env.GODOT_VERSION }} .; fi
       - name: Run export
-        run: docker run --volume $PWD:/srv --workdir /srv godot:${{ env.GODOT_VERSION }} cargo make export-${{ matrix.target }}-release
+        run: docker run --volume $PWD:/srv --workdir /srv godot:${{ env.GODOT_VERSION }} cargo make --no-workspace --env BUILD_TARGET=${{ matrix.target }} -- export
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:

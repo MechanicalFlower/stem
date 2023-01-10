@@ -1,3 +1,6 @@
+[env]
+CARGO_MAKE_RUST_TARGET_TRIPLE = { value = "${BUILD_TARGET}", condition = { env_set = ["BUILD_TARGET"] } }
+
 #
 # Main commands
 #
